@@ -105,24 +105,24 @@ public class RandomNumberTest {
 //		for(int i=0; i<10; i++){
 //			System.out.print(P_rand(10)+"\t");
 //		}System.out.println();
-		double sum = 0;
-		double[] p = new double[4];
-		for(int k=1; k<=4; k++){
-			int factorial = 1;
-			for(int i=1; i<=k; i++){
-				factorial *= i;
-			}
-			p[k-1] = (Math.pow(2, k) * Math.exp(-2)) / factorial;
-			sum += p[k-1];
-			System.out.println(p[k-1]);
-		}
-		System.out.println("sum = "+sum);
-		double sum2 = 0;
-		for(int i=0; i<4; i++){
-			System.out.println(p[i] / sum);
-			sum2 += p[i]/sum;
-		}
-		System.out.println("sum2 = "+sum2);
+//		double sum = 0;
+//		double[] p = new double[4];
+//		for(int k=1; k<=4; k++){
+//			int factorial = 1;
+//			for(int i=1; i<=k; i++){
+//				factorial *= i;
+//			}
+//			p[k-1] = (Math.pow(2, k) * Math.exp(-2)) / factorial;
+//			sum += p[k-1];
+//			System.out.println(p[k-1]);
+//		}
+//		System.out.println("sum = "+sum);
+//		double sum2 = 0;
+//		for(int i=0; i<4; i++){
+//			System.out.println(p[i] / sum);
+//			sum2 += p[i]/sum;
+//		}
+//		System.out.println("sum2 = "+sum2);
 		
 //		二项分布随机数
 //		String filePath = "bin/binrand.txt"; 
@@ -144,5 +144,14 @@ public class RandomNumberTest {
 //			}
 //			System.out.println("sum2 = "+sum2);
 //		}
+		
+//		int a = 1;
+//		if(a<2){
+//			System.out.println("2");
+//		}
+//		else if(a<3){
+//			System.out.println("3");
+//		}
+//		System.out.println(Math.abs(2-1));
 	}
 }

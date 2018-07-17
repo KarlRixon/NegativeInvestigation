@@ -2,13 +2,20 @@ package link.karlrixon;
 
 import java.util.Scanner;
 
-public class NegativeSearchTest4 {
+public class NegativeSearchTest5 {
 	final static int C = 6;			//选项个数
 	final static int M = 1000000;	//调查人数
+	final static int D = 100;		//重复实验次数
 	final static int k = 1;			//多选负调查选择个数
 	static int n;					//不定项负调查选择个数
-	static double[] firstPossibility = new double[C+1];//两种调查使用相同的正选项预设概率
-	static double[] firstPossibilityN = new double[C-2];//不定项负调查选择个数预设概率
+	static double[] firstPossibility = new double[C+1];			//两种调查使用相同的正选项预设概率
+	static double[] firstPossibilityN = new double[C-2];		//不定项负调查选择个数预设概率
+	static double[][][] averageDK = new double[7][6][C+1];		//多选方差均值
+	static double[][][] averageDN = new double[7][6][C+1];		//不定项方差均值
+	static double[][][] theoryDK = new double[7][6][C+1];		//定项理论方差
+	static double[][][] theoryDN = new double[7][6][C+1];		//不定项理论方差
+	static double[][][][] greatNumberK = new double[7][6][C+1][4];				//用大数定律验证理论正确性
+	static double[][][][] greatNumberN = new double[7][6][C+1][4];				//用大数定律验证理论正确性
 	//不同分布的选项索引随机数
 	static int[] randomC;
 	//不同分布的选择个数随机数
@@ -335,39 +342,49 @@ public class NegativeSearchTest4 {
 				System.out.print(last2Possibility[i]+"\t");
 			}System.out.println();
 		}
-		public void showDpossibility(){
+		public void showDpossibility(int option, int j){
 			double Dpossibility = 0;
 			for (int i = 1; i <= C; i++)
 			{
 				Dpossibility =Dpossibility + (secondPossibility[i] - last2Possibility[i])*(secondPossibility[i] - last2Possibility[i]);
 			}
-			System.out.println("方差："+Dpossibility);
-			System.out.println("每项方差（理论值）：");
+//			System.out.println("方差："+Dpossibility);
+//			System.out.println("每项方差（理论值）：");
 			double DpossibilityK[] = new double[C+1];
 			for (int i = 1; i <= C; i++)
 			{
 				DpossibilityK[i] = ((1-last2Possibility[i])*((C-1-k))) / (k*M);
-				System.out.print(DpossibilityK[i]+"\t");
-			}System.out.println();
+//				System.out.print(DpossibilityK[i]+"\t");
+				theoryDK[option][j][i] = DpossibilityK[i];
+			}
+//			System.out.println();
 			double DpossibilityKK[] = new double[C+1];
-			System.out.println("每项方差（实验值）：");
+//			System.out.println("每项方差（实验值）：");
 			for (int i = 1; i <= C; i++)
 			{
 				DpossibilityKK[i] = (last2Possibility[i] - secondPossibility[i]) * (last2Possibility[i] - secondPossibility[i]);
-				System.out.print(DpossibilityKK[i]+"\t");
-			}System.out.println();
+//				System.out.print(DpossibilityKK[i]+"\t");
+				averageDK[option][j][i] += DpossibilityKK[i];
+				//用于大数定律验证
+				double P = (Math.abs(last2Possibility[i]-secondPossibility[i])/Math.sqrt(DpossibilityK[i]));
+//				System.out.println(P);
+				if(P < 1)greatNumberK[option][j][i][1] += 1;
+				else if(P < 2)greatNumberK[option][j][i][2] += 1;
+				else if(P < 3)greatNumberK[option][j][i][3] += 1;
+			}
+//			System.out.println();
 		}
-		public void show(){
-			System.out.println("选项个数："+C);
-			System.out.println("调查人数："+M);
-			System.out.println("多选数量："+k);
-			System.out.println("正调查百分比：");
-			showFirstPossibility();
-			System.out.println("生成正调查百分比：");
-			showSecondPossibilty();
-			System.out.println("算得正调查百分比：");
-			showlast2Possibility();
-			showDpossibility();
+		public void show(int option, int i){
+//			System.out.println("选项个数："+C);
+//			System.out.println("调查人数："+M);
+//			System.out.println("多选数量："+k);
+//			System.out.println("正调查百分比：");
+//			showFirstPossibility();
+//			System.out.println("生成正调查百分比：");
+//			showSecondPossibilty();
+//			System.out.println("算得正调查百分比：");
+//			showlast2Possibility();
+			showDpossibility(option, i);
 		}
 	}
 	
@@ -450,7 +467,7 @@ public class NegativeSearchTest4 {
 				}
 				//依概率分布随机选取n值
 				n = randomN[i];
-				int spy = n;
+//				int spy = n;
 				lambda_j[n-1] += 1;
 				//模拟不定项选
 				key3 = key2;
@@ -487,26 +504,36 @@ public class NegativeSearchTest4 {
 				System.out.print(last2Possibility[i]+"\t");
 			}System.out.println();
 		}
-		public void showDpossibility(){		//计算方差
+		public void showDpossibility(int option, int j){		//计算方差
 			double sum_lambda_j_2 = 0;
 			double sum_lambda_j_frac_j = 0;
 			for(int i=0; i<C-2; i++){
 				sum_lambda_j_2 += lambda_j[i] * lambda_j[i];
 				sum_lambda_j_frac_j += lambda_j[i] / (double)(i+1);
 			}
-			System.out.println("方差（理论值）：");
+//			System.out.println("方差（理论值）：");
 			for (int i = 1; i <= C; i++)
 			{
 				Dpossibility[i] = (1-sum_lambda_j_2+(1-last2Possibility[i])*((C-1)*sum_lambda_j_frac_j+sum_lambda_j_2-2)) / M;
-				System.out.print(Dpossibility[i]+"\t");
-			}System.out.println();
+//				System.out.print(Dpossibility[i]+"\t");
+				theoryDN[option][j][i] = Dpossibility[i];
+			}
+//			System.out.println();
 			double DpossibilityN[] = new double[C+1];
-			System.out.println("方差（实验值）：");
+//			System.out.println("方差（实验值）：");
 			for (int i = 1; i <= C; i++)
 			{
 				DpossibilityN[i] = (last2Possibility[i] - secondPossibility[i]) * (last2Possibility[i] - secondPossibility[i]);
-				System.out.print(DpossibilityN[i]+"\t");
-			}System.out.println();
+//				System.out.print(DpossibilityN[i]+"\t");
+				averageDN[option][j][i] += DpossibilityN[i];
+				//用于大数定律验证
+				double P = (Math.abs(last2Possibility[i]-secondPossibility[i])/Math.sqrt(Dpossibility[i]));
+//				System.out.println(P);
+				if(P < 1)greatNumberN[option][j][i][1] += 1;
+				else if(P < 2)greatNumberN[option][j][i][2] += 1;
+				else if(P < 3)greatNumberN[option][j][i][3] += 1;
+			}
+//			System.out.println();
 		}
 //		public void set_n_mode(int mode){
 //			firstPossibility[0] = mode;
@@ -521,105 +548,116 @@ public class NegativeSearchTest4 {
 				System.out.print(lambda_j[i]+"\t");
 			}System.out.println();
 		}
-		public void show(){
-			System.out.println("选项个数："+C);
-			System.out.println("调查人数："+M);
-			System.out.println("预设多选数量概率：");
-			show_n_possibility();
-			System.out.println("生成多选数量百分比：");
-			showLambdaJ();
-			System.out.println("预设正调查概率：");
-			showFirstPossibility();
-			System.out.println("生成正调查百分比：");
-			showSecondPossibilty();
-			System.out.println("算得正调查百分比：");
-			showlast2Possibility();
-			showDpossibility();
+		public void show(int option, int i){
+//			System.out.println("选项个数："+C);
+//			System.out.println("调查人数："+M);
+//			System.out.println("预设多选数量概率：");
+//			show_n_possibility();
+//			System.out.println("生成多选数量百分比：");
+//			showLambdaJ();
+//			System.out.println("预设正调查概率：");
+//			showFirstPossibility();
+//			System.out.println("生成正调查百分比：");
+//			showSecondPossibilty();
+//			System.out.println("算得正调查百分比：");
+//			showlast2Possibility();
+			showDpossibility(option, i);
 		}
 	}
 	
 	public static void main(String[] args) {
-		if(k >= C || k < 1 || C < 2 || C > 20 || M < 1000 ){
-			System.out.println("请检查C,M,k的值是否有误");
+		if(k >= C || k < 1 || C < 2 || C > 20 || M < 1000 || D <0){
+			System.out.println("请检查C,M,D,k的值是否有误");
 			return;
 		}
-		while(true){
-			PossibilityK psbk = new PossibilityK();
-			PossibilityN psbn = new PossibilityN();
-			Scanner input = new Scanner(System.in);
-			System.out.println("----生成预设概率:");
-			System.out.print("1.等差分布"+"  ");
-			System.out.print("2.随机分布"+"  ");
-			System.out.print("3.手动输入概率"+"  ");
-			System.out.print("4.均匀分布"+"  ");
-			System.out.print("5.泊松分布"+"  ");
-			System.out.print("6.二项分布"+"  ");
-			System.out.print("7.正态分布"+"  ");
-			System.out.println("8.退出程序"+"  ");
-			int option = input.nextInt();
-			if(option == 8){
-				input.close();
-				return;
-			}else if(option < 1 || option > 7){
-				System.out.println("输入错误");
-				continue;
-			}
-//			switch(option){
-//				case 1: psbk.setFirstPossibility();psbn.setFirstPossibility();break;
-//				case 2: psbk.setFirstPossibility(1);psbn.setFirstPossibility(1);break;
-//				case 3: {
-//					double[] p = new double[C+1];
-//					System.out.println("请手动输入"+C+"个概率");
-//					for(int i=1; i<=C; i++){
-//						p[i] = input.nextDouble();
-//					}
-//					psbk.setFirstPossibility(p);
-//					psbn.setFirstPossibility(p);
-//					break;
-//				}
-//				case 4: psbk.setFirstPossibility(1,1);psbn.setFirstPossibility(1, 1);break;
-//				case 5: psbk.setFirstPossibility(1, 1, 1);psbn.setFirstPossibility(1, 1, 1);break;
-//				case 6: psbk.setFirstPossibility(1, 1, 1, 1);psbn.setFirstPossibility(1, 1, 1, 1);break;
-//				case 7: psbk.setFirstPossibility(1, 1, 1, 1, 1);psbn.setFirstPossibility(1, 1, 1, 1, 1);break;
-//				case 8: input.close();return;
-//				default: continue;
-//			}
-			setFirstPossibility(option, psbk, psbn);
-			setOptionRandomNum();
-			while(true){
-				System.out.println("----多选数量k的概率分布：");
-				System.out.print("1.等差分布"+"  ");
-				System.out.print("2.随机分布"+"  ");
-				System.out.print("3.均匀分布"+"  ");
-				System.out.print("4.泊松分布"+"  ");
-				System.out.print("5.二项分布"+"  ");
-				System.out.print("6.正态分布"+"  ");
-				System.out.println("7.退出程序");
-				int i = input.nextInt();
-				if(i == 8){
-					input.close();
-					return;
-				}else if(i < 1 || i > 7){
-					System.out.println("输入错误");
-					continue;
+		long begintime = System.currentTimeMillis();
+		for(int option=1; option<=6; option++){
+			if(option == 3)continue;
+			for(int i=1; i<=5; i++){
+				for(int d=0; d<D; d++){
+					PossibilityK psbk = new PossibilityK();
+					PossibilityN psbn = new PossibilityN();
+					
+					setFirstPossibility(option, psbk, psbn);
+					setOptionRandomNum();
+						setFirstPossibilityN(i, psbn);
+						setOptionCountRandomNum();
+						//开始调查和统计
+						psbk.setSecondLast2Possibility();
+						psbn.setSecondLast2Possibility();
+						psbk.show(option, i);
+						psbn.show(option, i);
+					psbk.refresh();
+					psbn.refresh();
 				}
-				setFirstPossibilityN(i, psbn);
-				setOptionCountRandomNum();
-//				psbn.set_n_mode(i);
-				//开始调查和统计
-				psbk.setSecondLast2Possibility();
-				psbn.setSecondLast2Possibility();
-				System.out.println("多选负调查----------------------------------------------------------------------------------------------");
-				psbk.show();
+				switch(option){
+					case 1:System.out.print("选项分布：等差分布\t");break;
+					case 2:System.out.print("选项分布：随机分布\t");break;
+					case 4:System.out.print("选项分布：均匀分布\t");break;
+					case 5:System.out.print("选项分布：泊松分布\t");break;
+					case 6:System.out.print("选项分布：二项分布\t");break;
+				}
+				switch(i){
+					case 1:System.out.print("选择个数：等差分布\t");break;
+					case 2:System.out.print("选择个数：随机分布\t");break;
+					case 3:System.out.print("选择个数：均匀分布\t");break;
+					case 4:System.out.print("选择个数：泊松分布\t");break;
+					case 5:System.out.print("选择个数：二项分布\t");break;
+				}
+				System.out.println("-----------------------------------------------------------------------");
+				System.out.println("重复试验次数："+D);
+				System.out.println("定项方差理论值");
+				for(int e=0; e<C; e++){
+					System.out.print(theoryDK[option][i][e+1]+"\t");
+				}
 				System.out.println();
-				System.out.println("不定项负调查---------------------------------------------------------------------------------------------");
-				psbn.show();
+				System.out.println("定项方差实验均值");
+				for(int e=0; e<C; e++){
+					System.out.print(averageDK[option][i][e+1] / D+"\t");
+				}
+				System.out.println();
+				System.out.println("不定项方差理论值");
+				for(int e=0; e<C; e++){
+					System.out.print(theoryDN[option][i][e+1]+"\t");
+				}
+				System.out.println();
+				System.out.println("不定项方差实验均值");
+				for(int e=0; e<C; e++){
+					System.out.print(averageDN[option][i][e+1] / D+"\t");
+				}
+				System.out.println();
+				System.out.println("大数定律----------------------------------------");
+				System.out.println("p(P<1)=68.27%\tp(P<2)=95.45%\tp(P<3)=99.74%");
+				System.out.println("实验值对比：");
+				double[] average = new double[4];
+				for(int e=1; e<=C; e++){
+					System.out.print("多选");
+					System.out.print("i = "+e+",\tp(<1)="+greatNumberK[option][i][e][1]/(double)D+"\t");
+					System.out.print("p(<2)="+(greatNumberK[option][i][e][1]+greatNumberK[option][i][e][2])/(double)D+"\t");
+					System.out.println("p(<3)="+(greatNumberK[option][i][e][1]+greatNumberK[option][i][e][2]+greatNumberK[option][i][e][3])/(double)D+"\t");
+					average[1] += greatNumberK[option][i][e][1];
+					average[2] += (greatNumberK[option][i][e][1]+greatNumberK[option][i][e][2]);
+					average[3] += (greatNumberK[option][i][e][1]+greatNumberK[option][i][e][2]+greatNumberK[option][i][e][3]);
+				}
+				System.out.println("均值：\t\tp(<1)="+average[1]/C/D+"\tp(<2)="+average[2]/C/D+"\tp(<3)="+average[3]/C/D);
+				average[0]=average[1]=average[2]=average[3]=0;
+				for(int e=1; e<=C; e++){
+					System.out.print("不定项");
+					System.out.print("i = "+e+",\tp(<1)="+greatNumberN[option][i][e][1]/(double)D+"\t");
+					System.out.print("p(<2)="+(greatNumberN[option][i][e][1]+greatNumberN[option][i][e][2])/(double)D+"\t");
+					System.out.println("p(<3)="+(greatNumberN[option][i][e][1]+greatNumberN[option][i][e][2]+greatNumberN[option][i][e][3])/(double)D+"\t");
+					average[1] += greatNumberN[option][i][e][1];
+					average[2] += (greatNumberN[option][i][e][1]+greatNumberN[option][i][e][2]);
+					average[3] += (greatNumberN[option][i][e][1]+greatNumberN[option][i][e][2]+greatNumberN[option][i][e][3]);
+				}
+				System.out.println("均值：\t\tp(<1)="+average[1]/C/D+"\tp(<2)="+average[2]/C/D+"\tp(<3)="+average[3]/C/D);
+				average[0]=average[1]=average[2]=average[3]=0;
 				System.out.println();
 				System.out.println();
-				break;
 			}
-			psbk.refresh();
-			psbn.refresh();
 		}
+		long endtime=System.currentTimeMillis();
+		long costTime = (endtime - begintime);
+		System.out.println("花费时间："+costTime+"ms");
 	}
 }
