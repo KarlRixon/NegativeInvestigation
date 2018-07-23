@@ -71,6 +71,12 @@ public class RandomNumberTest {
         return ret[N][k];
     }
 	
+	public static double normal(double x, double e, double s){
+		double a = 1/(s*Math.sqrt(2*Math.PI));
+		double b = Math.exp(((x-e)*(e-x))/(2*s*s));
+		return a*b;
+	}
+	
 	public static void main(String[] args) {
 //		均匀分布随机数
 //		for(int i = 0; i<50; i++){
@@ -153,5 +159,17 @@ public class RandomNumberTest {
 //			System.out.println("3");
 //		}
 //		System.out.println(Math.abs(2-1));
+		
+//		正态分布
+		double sum = 0;
+		for(int i=1; i<=8; i++){
+			System.out.println((double)i/9+":\t"+normal((double)i/9, 0.5, 0.2));
+			sum += normal((double)i/9, 0.5, 0.25);
+		}
+		System.out.println("sum = "+sum);
+		for(int i=1; i<=8; i++){
+			System.out.println((double)i/9+":\t"+normal((double)i/9, 0.5, 0.2)/sum);
+		}
+		
 	}
 }

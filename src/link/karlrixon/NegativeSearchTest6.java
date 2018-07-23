@@ -2,10 +2,9 @@ package link.karlrixon;
 
 import java.util.Scanner;
 
-public class NegativeSearchTest4 {
-	final static int C = 6;			//选项个数
+public class NegativeSearchTest6 {
+	final static int C = 10;			//选项个数
 	final static int M = 1000000;	//调查人数
-	final static int k = 3;			//多选负调查选择个数
 	static int n;					//不定项负调查选择个数
 	static double[] firstPossibility = new double[C+1];//两种调查使用相同的正选项预设概率
 	static double[] firstPossibilityN = new double[C-2];//不定项负调查选择个数预设概率
@@ -39,13 +38,12 @@ public class NegativeSearchTest4 {
         return ret[N][k];
     }
 	
-	public static void setFirstPossibility(int j, PossibilityK psbk, PossibilityN psbn){
+	public static void setFirstPossibility(int j, PossibilityN psbn){
 		if(j == 1){		//等差概率
 			for(int i=1; i<=C; i++){
 				firstPossibility[i]=2*(double)i/(double)(C*(C+1));
 			}
 			firstPossibility[0] = 1;
-			psbk.setFirstPossibility(firstPossibility);
 			psbn.setFirstPossibility(firstPossibility);
 		}
 		else if(j == 2){	//随机概率
@@ -58,7 +56,6 @@ public class NegativeSearchTest4 {
 				firstPossibility[i] /= sum;
 			}
 			firstPossibility[0] = 1;
-			psbk.setFirstPossibility(firstPossibility);
 			psbn.setFirstPossibility(firstPossibility);
 		}
 		else if(j == 3){	//手动输入
@@ -76,7 +73,6 @@ public class NegativeSearchTest4 {
 			}
 			input.close();
 			firstPossibility[0] = 1;
-			psbk.setFirstPossibility(firstPossibility);
 			psbn.setFirstPossibility(firstPossibility);
 		}
 		else if(j == 4){	//均匀分布
@@ -84,7 +80,6 @@ public class NegativeSearchTest4 {
 				firstPossibility[i] = 1/(double)C;
 			}
 			firstPossibility[0] = 1;
-			psbk.setFirstPossibility(firstPossibility);
 			psbn.setFirstPossibility(firstPossibility);
 		}
 		else if(j == 5){	//泊松分布
@@ -101,7 +96,6 @@ public class NegativeSearchTest4 {
 				firstPossibility[i+1] /= sum;
 			}
 			firstPossibility[0] = 1;
-			psbk.setFirstPossibility(firstPossibility);
 			psbn.setFirstPossibility(firstPossibility);
 		}
 		else if(j == 6){	//二项分布
@@ -114,13 +108,11 @@ public class NegativeSearchTest4 {
 				firstPossibility[i+1] /= sum;
 			}
 			firstPossibility[0] = 1;
-			psbk.setFirstPossibility(firstPossibility);
 			psbn.setFirstPossibility(firstPossibility);
 		}
 		else if(j == 7){	//正态分布
 			
 			firstPossibility[0] = 1;
-			psbk.setFirstPossibility(firstPossibility);
 			psbn.setFirstPossibility(firstPossibility);
 		}
 	}
@@ -176,7 +168,17 @@ public class NegativeSearchTest4 {
 			psbn.setFirstPossibilityN(firstPossibilityN);
 		}
 		else if(j == 6){	//正态分布
-			
+			double sum = 0;
+//			double test = 0;
+			for(int i=0; i<C-2; i++){
+				firstPossibilityN[i] = normal((double)(i+1)/9, 0.5, 0.2);
+				sum += firstPossibilityN[i];
+			}
+			for(int i=0; i<C-2; i++){
+				firstPossibilityN[i] /= sum;
+//				test += firstPossibilityN[i];
+			}
+//			if(test != 1)System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+test);
 			psbn.setFirstPossibilityN(firstPossibilityN);
 		}
 	}
@@ -231,13 +233,10 @@ public class NegativeSearchTest4 {
 		}
 	}
 	
-	public static boolean keyIn(int key, int[] keys){
-		for(int i = 0; i < k+1; i++){
-			if(key == keys[i]){
-				return true;
-			}
-		}
-		return false;
+	public static double normal(double x, double e, double s){
+		double a = 1/(s*Math.sqrt(2*Math.PI));
+		double b = Math.exp(((x-e)*(e-x))/(2*s*s));
+		return a*b;
 	}
 	
 	public static boolean n_keyIn(int key, int[] keys){
@@ -255,119 +254,6 @@ public class NegativeSearchTest4 {
 				keys[i] = key;
 				return;
 			}
-		}
-	}
-	public static class PossibilityK{
-		private double[] firstPossibility = new double[C+1];		//预设百分比
-		private double[] secondPossibility = new double[C+1];	//生成数据百分比
-		public double[] last2Possibility = new double[C+1];		//矩阵求逆法
-		
-		public void refresh(){ 
-			for(int i=0; i<C+1; i++){
-				firstPossibility[i] = 0;
-				secondPossibility[i] = 0;
-				last2Possibility[i] = 0;
-			}
-		}
-		public void showFirstPossibility() {
-			for(int i=1; i<=C; i++){
-				System.out.print(firstPossibility[i]+"\t");
-			}System.out.println();
-		}
-		public void setFirstPossibility(double[] p){
-			for(int i=0; i<C+1; i++){
-				firstPossibility[i] = p[i];
-			}
-		}
-		public void showSecondPossibilty() {
-			for(int i=1; i<=C; i++){
-				System.out.print(secondPossibility[i]+"\t");
-			}System.out.println();
-		}
-		public void setSecondLast2Possibility() {
-			if(firstPossibility[0] == 0){
-				System.out.println("未初始化预设概率");
-				return;
-			}
-//			int key1;	//通过此随机数模拟一个用户的正选项
-			int key2=0;		//用户的正选项索引
-			int key3;		//随机生成负选项索引
-//			double[] usePossibility = new double[C+1];
-//			usePossibility[0] = 0;
-//			for(int i = 1; i <=C; i++){
-//				usePossibility[i] = firstPossibility[i] + usePossibility[i-1];
-//			}
-			for(int i = 0; i < M; i++){
-				key2 = randomC[i];
-				secondPossibility[key2] += 1;
-//				for(int j = 1; j <= C; j++){
-//					if(key1 <= usePossibility[j]){
-//						key2 = j;
-//						secondPossibility[j] += (double)1;
-//						break;
-//					}
-//				}
-				if(key2 == 0){
-					System.out.println("error!");
-					return;
-				}
-				//模拟k选
-				key3 = key2;
-				int[] keys = new int[k+1];	//虽然用户选择了k个负选项，但用于确定key3取值范围的keys容量还要加一个正选项
-				keys[0] = key3;
-				for(int m = 0; m < k; m++){
-					while(keyIn(key3,keys)){
-						key3 = (int)(Math.random()*10*C%C+1);
-					}
-					addKey(key3,keys);
-					last2Possibility[key3] += 1;
-				}
-			}
-			for(int i = 1; i <= C; i++){
-				secondPossibility[i] /= (double)M;
-				//概率求逆
-				last2Possibility[i] /= M;
-				last2Possibility[i] = 1 - ((C-1)*last2Possibility[i])/k;
-			}
-		}
-		public void showlast2Possibility(){
-			for(int i=1; i<=C; i++){
-				System.out.print(last2Possibility[i]+"\t");
-			}System.out.println();
-		}
-		public void showDpossibility(){
-			double Dpossibility = 0;
-			for (int i = 1; i <= C; i++)
-			{
-				Dpossibility =Dpossibility + (secondPossibility[i] - last2Possibility[i])*(secondPossibility[i] - last2Possibility[i]);
-			}
-			System.out.println("方差："+Dpossibility);
-			System.out.println("每项方差（理论值）：");
-			double DpossibilityK[] = new double[C+1];
-			for (int i = 1; i <= C; i++)
-			{
-				DpossibilityK[i] = ((1-last2Possibility[i])*((C-1-k))) / (k*M);
-				System.out.print(DpossibilityK[i]+"\t");
-			}System.out.println();
-			double DpossibilityKK[] = new double[C+1];
-			System.out.println("每项方差（实验值）：");
-			for (int i = 1; i <= C; i++)
-			{
-				DpossibilityKK[i] = (last2Possibility[i] - secondPossibility[i]) * (last2Possibility[i] - secondPossibility[i]);
-				System.out.print(DpossibilityKK[i]+"\t");
-			}System.out.println();
-		}
-		public void show(){
-			System.out.println("选项个数："+C);
-			System.out.println("调查人数："+M);
-			System.out.println("多选数量："+k);
-			System.out.println("正调查百分比：");
-			showFirstPossibility();
-			System.out.println("生成正调查百分比：");
-			showSecondPossibilty();
-			System.out.println("算得正调查百分比：");
-			showlast2Possibility();
-			showDpossibility();
 		}
 	}
 	
@@ -425,32 +311,19 @@ public class NegativeSearchTest4 {
 				System.out.println("未初始化预设概率");
 				return;
 			}
-//			double key1;	//通过此随机数模拟一个用户的正选项
 			int key2=0;		//用户的正选项索引
 			int key3;		//随机生成负选项索引
-//			double[] usePossibility = new double[C+1];
-//			usePossibility[0] = 0;
-//			for(int i = 1; i <=C; i++){
-//				usePossibility[i] = firstPossibility[i] + usePossibility[i-1];
-//			}
 //			收集数据
 			for(int i = 0; i < M; i++){
 				key2 = randomC[i];
 				secondPossibility[key2] += 1;
-//				for(int j = 1; j <= C; j++){
-//					if(key1 <= usePossibility[j]){
-//						key2 = j;
-//						secondPossibility[j] += (double)1;
-//						break;
-//					}
-//				}
 				if(key2 == 0){
 					System.out.println("error!");
 					return;
 				}
 				//依概率分布随机选取n值
 				n = randomN[i];
-				int spy = n;
+//				int spy = n;
 				lambda_j[n-1] += 1;
 				//模拟不定项选
 				key3 = key2;
@@ -508,9 +381,6 @@ public class NegativeSearchTest4 {
 				System.out.print(DpossibilityN[i]+"\t");
 			}System.out.println();
 		}
-//		public void set_n_mode(int mode){
-//			firstPossibility[0] = mode;
-//		}
 		public void show_n_possibility(){
 			for(int i=0; i<C-2; i++){
 				System.out.print(nPossibility[i]+"\t");
@@ -524,102 +394,74 @@ public class NegativeSearchTest4 {
 		public void show(){
 			System.out.println("选项个数："+C);
 			System.out.println("调查人数："+M);
-			System.out.println("预设多选数量概率：");
-			show_n_possibility();
-			System.out.println("生成多选数量百分比：");
+//			System.out.println("预设多选数量概率：");
+//			show_n_possibility();
+			System.out.println("生成多选数量概率分布：");
 			showLambdaJ();
-			System.out.println("预设正调查概率：");
-			showFirstPossibility();
-			System.out.println("生成正调查百分比：");
+//			System.out.println("预设正调查概率：");
+//			showFirstPossibility();
+			System.out.println("生成正调查概率分布：");
 			showSecondPossibilty();
 			System.out.println("算得正调查百分比：");
 			showlast2Possibility();
-			showDpossibility();
+//			showDpossibility();
+		}
+	}
+	
+	public static void fun(int option, int i){
+		PossibilityN psbn = new PossibilityN();
+		{
+			setFirstPossibility(option, psbn);
+			setOptionRandomNum();
+			{
+				setFirstPossibilityN(i, psbn);
+				setOptionCountRandomNum();
+				//开始调查和统计
+				psbn.setSecondLast2Possibility();
+				psbn.show();
+				System.out.println();
+				System.out.println();
+				psbn.refresh();
+			}
 		}
 	}
 	
 	public static void main(String[] args) {
-		if(k >= C || k < 1 || C < 2 || C > 20 || M < 1000 ){
+		if(C < 2 || C > 20 || M < 1000 ){
 			System.out.println("请检查C,M,k的值是否有误");
 			return;
 		}
-		while(true){
-			PossibilityK psbk = new PossibilityK();
-			PossibilityN psbn = new PossibilityN();
-			Scanner input = new Scanner(System.in);
-			System.out.println("----生成预设概率:");
-			System.out.print("1.等差分布"+"  ");
-			System.out.print("2.随机分布"+"  ");
-			System.out.print("3.手动输入概率"+"  ");
-			System.out.print("4.均匀分布"+"  ");
-			System.out.print("5.泊松分布"+"  ");
-			System.out.print("6.二项分布"+"  ");
-			System.out.print("7.正态分布"+"  ");
-			System.out.println("8.退出程序"+"  ");
-			int option = input.nextInt();
-			if(option == 8){
-				input.close();
-				return;
-			}else if(option < 1 || option > 7){
-				System.out.println("输入错误");
-				continue;
-			}
-//			switch(option){
-//				case 1: psbk.setFirstPossibility();psbn.setFirstPossibility();break;
-//				case 2: psbk.setFirstPossibility(1);psbn.setFirstPossibility(1);break;
-//				case 3: {
-//					double[] p = new double[C+1];
-//					System.out.println("请手动输入"+C+"个概率");
-//					for(int i=1; i<=C; i++){
-//						p[i] = input.nextDouble();
-//					}
-//					psbk.setFirstPossibility(p);
-//					psbn.setFirstPossibility(p);
-//					break;
-//				}
-//				case 4: psbk.setFirstPossibility(1,1);psbn.setFirstPossibility(1, 1);break;
-//				case 5: psbk.setFirstPossibility(1, 1, 1);psbn.setFirstPossibility(1, 1, 1);break;
-//				case 6: psbk.setFirstPossibility(1, 1, 1, 1);psbn.setFirstPossibility(1, 1, 1, 1);break;
-//				case 7: psbk.setFirstPossibility(1, 1, 1, 1, 1);psbn.setFirstPossibility(1, 1, 1, 1, 1);break;
-//				case 8: input.close();return;
-//				default: continue;
-//			}
-			setFirstPossibility(option, psbk, psbn);
-			setOptionRandomNum();
-			while(true){
-				System.out.println("----多选数量k的概率分布：");
-				System.out.print("1.等差分布"+"  ");
-				System.out.print("2.随机分布"+"  ");
-				System.out.print("3.均匀分布"+"  ");
-				System.out.print("4.泊松分布"+"  ");
-				System.out.print("5.二项分布"+"  ");
-				System.out.print("6.正态分布"+"  ");
-				System.out.println("7.退出程序");
-				int i = input.nextInt();
-				if(i == 8){
-					input.close();
-					return;
-				}else if(i < 1 || i > 7){
-					System.out.println("输入错误");
-					continue;
-				}
-				setFirstPossibilityN(i, psbn);
-				setOptionCountRandomNum();
-//				psbn.set_n_mode(i);
-				//开始调查和统计
-				psbk.setSecondLast2Possibility();
-				psbn.setSecondLast2Possibility();
-				System.out.println("多选负调查----------------------------------------------------------------------------------------------");
-				psbk.show();
-				System.out.println();
-				System.out.println("不定项负调查---------------------------------------------------------------------------------------------");
-				psbn.show();
-				System.out.println();
-				System.out.println();
-				break;
-			}
-			psbk.refresh();
-			psbn.refresh();
-		}
+		System.out.println("均匀\t均匀---------------------------------------------------------------------------------------------");
+		fun(4, 3);
+		System.out.println("均匀\t正态---------------------------------------------------------------------------------------------");
+		fun(4, 6);
+		System.out.println("泊松\t均匀---------------------------------------------------------------------------------------------");
+		fun(5, 3);
+		System.out.println("泊松\t正态---------------------------------------------------------------------------------------------");
+		fun(5, 6);
+		System.out.println("二项\t均匀---------------------------------------------------------------------------------------------");
+		fun(6, 3);
+		System.out.println("二项\t正态---------------------------------------------------------------------------------------------");
+		fun(6, 6);
+//		Scanner input = new Scanner(System.in);
+//		System.out.println("----生成预设概率:");
+//		System.out.print("1.等差分布"+"  ");
+//		System.out.print("2.随机分布"+"  ");
+//		System.out.print("3.手动输入概率"+"  ");
+//		System.out.print("4.均匀分布"+"  ");
+//		System.out.print("5.泊松分布"+"  ");
+//		System.out.print("6.二项分布"+"  ");
+//		System.out.print("7.正态分布"+"  ");
+//		System.out.println("8.退出程序"+"  ");
+		
+//		System.out.println("----多选数量k的概率分布：");
+//		System.out.print("1.等差分布"+"  ");
+//		System.out.print("2.随机分布"+"  ");
+//		System.out.print("3.均匀分布"+"  ");
+//		System.out.print("4.泊松分布"+"  ");
+//		System.out.print("5.二项分布"+"  ");
+//		System.out.print("6.正态分布"+"  ");
+//		System.out.println("7.退出程序");
+		
 	}
 }

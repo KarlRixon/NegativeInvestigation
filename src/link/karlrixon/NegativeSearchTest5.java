@@ -6,7 +6,7 @@ public class NegativeSearchTest5 {
 	final static int C = 6;			//选项个数
 	final static int M = 1000000;	//调查人数
 	final static int D = 100;		//重复实验次数
-	final static int k = 1;			//多选负调查选择个数
+	final static int k = 3;			//多选负调查选择个数
 	static int n;					//不定项负调查选择个数
 	static double[] firstPossibility = new double[C+1];			//两种调查使用相同的正选项预设概率
 	static double[] firstPossibilityN = new double[C-2];		//不定项负调查选择个数预设概率
@@ -14,8 +14,8 @@ public class NegativeSearchTest5 {
 	static double[][][] averageDN = new double[7][6][C+1];		//不定项方差均值
 	static double[][][] theoryDK = new double[7][6][C+1];		//定项理论方差
 	static double[][][] theoryDN = new double[7][6][C+1];		//不定项理论方差
-	static double[][][][] greatNumberK = new double[7][6][C+1][4];				//用大数定律验证理论正确性
-	static double[][][][] greatNumberN = new double[7][6][C+1][4];				//用大数定律验证理论正确性
+	static double[][][][] greatNumberK = new double[7][6][C+1][4];				//用中心极限定理验证理论正确性
+	static double[][][][] greatNumberN = new double[7][6][C+1][4];				//用中心极限定理验证理论正确性
 	//不同分布的选项索引随机数
 	static int[] randomC;
 	//不同分布的选择个数随机数
@@ -365,7 +365,7 @@ public class NegativeSearchTest5 {
 				DpossibilityKK[i] = (last2Possibility[i] - secondPossibility[i]) * (last2Possibility[i] - secondPossibility[i]);
 //				System.out.print(DpossibilityKK[i]+"\t");
 				averageDK[option][j][i] += DpossibilityKK[i];
-				//用于大数定律验证
+				//用于中心极限定理验证
 				double P = (Math.abs(last2Possibility[i]-secondPossibility[i])/Math.sqrt(DpossibilityK[i]));
 //				System.out.println(P);
 				if(P < 1)greatNumberK[option][j][i][1] += 1;
@@ -526,7 +526,7 @@ public class NegativeSearchTest5 {
 				DpossibilityN[i] = (last2Possibility[i] - secondPossibility[i]) * (last2Possibility[i] - secondPossibility[i]);
 //				System.out.print(DpossibilityN[i]+"\t");
 				averageDN[option][j][i] += DpossibilityN[i];
-				//用于大数定律验证
+				//用于中心极限定理验证
 				double P = (Math.abs(last2Possibility[i]-secondPossibility[i])/Math.sqrt(Dpossibility[i]));
 //				System.out.println(P);
 				if(P < 1)greatNumberN[option][j][i][1] += 1;
@@ -626,7 +626,7 @@ public class NegativeSearchTest5 {
 					System.out.print(averageDN[option][i][e+1] / D+"\t");
 				}
 				System.out.println();
-				System.out.println("大数定律----------------------------------------");
+				System.out.println("中心极限定理----------------------------------------");
 				System.out.println("p(P<1)=68.27%\tp(P<2)=95.45%\tp(P<3)=99.74%");
 				System.out.println("实验值对比：");
 				double[] average = new double[4];
