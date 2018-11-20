@@ -6,7 +6,7 @@ Java
 
 ## 实验方法
 
-![mark](http://p0agp2qfd.bkt.clouddn.com/blog/180714/JH7Jd8fm23.png?imageslim)
+![mark](http://qiniu.karlrixon.cn/blog/180714/JH7Jd8fm23.png?imageslim)
 
 #### 本发明的实验共包含7个实验程序开发测试阶段，每个阶段在一个程序中进行。
 
@@ -18,4 +18,4 @@ Java
 6. **第六阶段(Test5)将实验方差分配到每个选项，便于比较理论方差和实验方差，添加重复试验模块，发现实验方差平均值与理论方差十分接近，同时多选负调查的估算结果比定项负调查略为精确**
 7. **第七阶段(Test5)添加代码运用中心极限定理重复试验验证理论正确性**
 
-![mark](https://qiniu.karlrixon.link/blg/181013/2GII1B70cc.jpg?imageslim)
+![mark](https://qiniu.karlrixon.cn/blg/181013/2GII1B70cc.jpg?imageslim)
