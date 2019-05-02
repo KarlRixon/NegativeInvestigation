@@ -18,4 +18,4 @@ Java
 6. **第六阶段(Test5)将实验方差分配到每个选项，便于比较理论方差和实验方差，添加重复试验模块，发现实验方差平均值与理论方差十分接近，同时多选负调查的估算结果比定项负调查略为精确**
 7. **第七阶段(Test5)添加代码运用中心极限定理重复试验验证理论正确性**
 
-![mark](https://qiniu.karlrixon.cn/blg/181013/2GII1B70cc.jpg?imageslim)
+![mark](https://qiniu.karlrixon.cn/blog/181013/2GII1B70cc.jpg?imageslim)
